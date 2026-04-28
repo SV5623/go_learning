@@ -1,0 +1,20 @@
+# binaries
+/bin/
+/build/
+/dist/
+*.exe
+*.out
+*.test
+
+# go
+*.log
+coverage.out
+
+.vscode/
+.idea/
+
+.DS_Store
+Thumbs.db
+
+.env
+.env.*

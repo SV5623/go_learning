@@ -1,0 +1,15 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: 
+      - "./internal/adapters/postgresql/sqlc/queries.sql" #queries  буде тут
+    schema:  "./internal/adapters/postgresql/migrations" #migration  буде тут
+    gen:
+      go:
+        package: "db"
+        out: "./internal/adapters/postgresql/sqlc"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+        emit_interface: true
+    
+    
