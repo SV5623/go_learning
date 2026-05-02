@@ -5,16 +5,15 @@ import (
 	"log"
 	"net/http"
 	"time"
-
+	repo "api_project/internal/adapters/postgresql/sqlc"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5"
 )
-
 
 type aplication struct {
 	config Config
-	// logger
-	// db driver
+	db *pgx.Conn
 }
 
 func (app *aplication) mount() http.Handler {
@@ -35,7 +34,7 @@ func (app *aplication) mount() http.Handler {
 	})
 
 	// Products routes з файлу handlers.go
-	productsService := products.NewService() // тут ми створюємо сервіс який реалізує інтерфейс Service, але поки що ми передаємо nil, бо ще не реалізували сервіс
+	productsService := products.NewService(repo.New(app.db)) // тут ми створюємо сервіс який реалізує інтерфейс Service, але поки що ми передаємо nil, бо ще не реалізували сервіс
 	productsHandler := products.NewHandler(productsService) // тут треба передати сервіс який буде реалізовувати інтерфейс Service, але поки що ми передаємо nil, бо ще не реалізували сервіс
 	r.Get("/products", productsHandler.ListProductsHandler) // тут ми вказуємо що при запиті на /products буде викликатися метод ListProductsHandler який знаходиться в productsHandler
 	

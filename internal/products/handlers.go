@@ -22,17 +22,12 @@ func NewHandler(service Service) *handler {
 
 func (h *handler) ListProductsHandler(w http.ResponseWriter, r *http.Request) {
 	// Implementation for getting a product
-	// 1 call the service
-	err := h.service.ListProducts(r.Context()) // тут ми викликаємо метод ListProducts який знаходиться в нашому сервісі і передаємо йому контекст з запиту, якщо виникає помилка, ми повертаємо її клієнту
+	products ,err := h.service.ListProducts(r.Context()) // тут ми викликаємо метод ListProducts який знаходиться в нашому сервісі і передаємо йому контекст з запиту, якщо виникає помилка, ми повертаємо її клієнту
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError) // тут ми використовуємо функцію http.Error яка знаходиться в пакеті net/http і передаємо їй відповідь яку ми хочемо повернути клієнту, статус відповіді і дані які ми хочемо повернути клієнту
 		return
 	}
-
-	products := struct {
-		Products []string `json:"products"`
-	}{}
 
 	json.WriteJSON(w, http.StatusOK, products) // тут ми використовуємо нашу функцію WriteJSON яка знаходиться в internal/json/json.go і передаємо їй відповідь яку ми хочемо повернути клієнту, статус відповіді і дані які ми хочемо повернути клієнту
 

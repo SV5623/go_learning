@@ -33,6 +33,7 @@ func main() {
 
 	api := aplication{
 	config: *cfg,
+	db: conn , // тут ми передаємо з'єднання з базою даних в нашу структуру aplication
 	}
 	
 	h := api.mount() //повертає хендлер який ми будемо запускати
