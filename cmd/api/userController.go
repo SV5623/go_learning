@@ -24,7 +24,19 @@ type loginUserRequest struct {
 type loginResponse struct {
 	Token string `json:"token"`
 }
-
+// loginUser authenticates user
+//
+// @Summary Login user
+// @Description Authenticates a user and returns a JWT token
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param credentials body loginUserRequest true "Login credentials"
+// @Success 200 {object} loginResponse
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/v1/auth/login [post]
 func (app *application) loginUserHandler(c *gin.Context) {
 	var auth loginUserRequest
 	if err := c.ShouldBindJSON(&auth); err != nil {
@@ -55,7 +67,18 @@ func (app *application) loginUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, loginResponse{Token: tokenString})
 }
 	
-
+// createUser registers a new user
+//
+// @Summary Register user
+// @Description Creates a new user account
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param user body registerUserRequest true "User registration data"
+// @Success 201 {object} database.User
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/v1/auth/register [post]
 func (app *application) createUserHandler(c *gin.Context) {
 	var req registerUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -80,5 +103,6 @@ func (app *application) createUserHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"user": user})
+	//c.JSON(http.StatusCreated, gin.H{"user": user})
+	c.JSON(http.StatusCreated, user)
 }

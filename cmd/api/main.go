@@ -8,12 +8,18 @@ import (
 	"strconv"
 
 	//	"rest_app_in_gin/internal/env"
-
+	_ "rest_app_in_gin/docs"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 )
 
-
+// @title Event App API
+// @version 1.0
+// @description This is a sample server for an event app.
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter your bearer token in the format "Bearer {token}"
 type application struct {
 	port int
 	jwtSecret string
@@ -31,6 +37,7 @@ func main() {
 	}
 	defer db.Close()
 	
+	log.Printf("PORTi='%s'", os.Getenv("PORT"))
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
 		log.Fatal(err)
