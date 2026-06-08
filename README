@@ -1,0 +1,197 @@
+# Event App API
+
+## Running the application
+
+The application is configured to run using Air for live reloading during development.
+
+### Install Air
+
+```bash
+go install github.com/air-verse/air@latest
+```
+
+Make sure `$GOPATH/bin` is added to your PATH.
+
+### Air configuration
+
+The project is configured to run from the `cmd/api` directory.
+
+`.air.toml`:
+
+```toml
+root = "."
+```
+
+### Environment variables
+
+The `.env` file must be located in the same directory where Air is started.
+
+For this project:
+
+```text
+cmd/api/.env
+```
+
+Example:
+
+```env
+PORT=5623
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/event_app?sslmode=disable
+JWT_SECRET=your-secret-key
+```
+
+### Start application
+
+Navigate to the API directory:
+
+```bash
+cd cmd/api
+```
+
+Run:
+
+```bash
+air
+```
+
+The API will be available on:
+
+```text
+http://localhost:5623
+```
+
+---
+
+## Database migrations
+
+Database schema changes are managed using golang-migrate.
+
+### Install migrate
+
+```bash
+go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+```
+
+### Create a migration
+
+Example:
+
+```bash
+migrate create -ext sql -dir ./cmd/migrate/migrations -seq create_attendees_table
+```
+
+This command generates two files:
+
+```text
+000001_create_attendees_table.up.sql
+000001_create_attendees_table.down.sql
+```
+
+### Write migration
+
+Example:
+
+`000001_create_attendees_table.up.sql`
+
+```sql
+CREATE TABLE IF NOT EXISTS attendees (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    event_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+```
+
+`000001_create_attendees_table.down.sql`
+
+```sql
+DROP TABLE IF EXISTS attendees;
+```
+
+### Apply migrations
+
+```bash
+go run main.go up
+```
+
+### Rollback migrations
+
+```bash
+go run main.go down
+```
+
+If a migration fails and the database becomes dirty:
+
+```bash
+migrate force <version>
+```
+
+Example:
+
+```bash
+migrate force 2
+```
+
+---
+
+## Swagger Documentation
+
+Swagger documentation is generated using Swaggo.
+
+### Install Swagger CLI
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
+### Generate documentation
+
+Run from the project root:
+
+```bash
+swag init --dir cmd/api --parseDependency --parseInternal --parseDepth 1
+```
+
+This command generates:
+
+```text
+docs/
+├── docs.go
+├── swagger.json
+└── swagger.yaml
+```
+
+### Register Swagger
+
+Import the generated package:
+
+```go
+import (
+    _ "rest_app_in_gin/docs"
+)
+```
+
+### Swagger endpoint
+
+Documentation is available at:
+
+```text
+http://localhost:5623/swagger/index.html
+```
+
+### Updating documentation
+
+Whenever API annotations are changed:
+
+```go
+// @Summary Get event
+// @Description Returns event by ID
+// @Router /api/v1/events/{id} [get]
+```
+
+regenerate documentation:
+
+```bash
+swag init --dir cmd/api --parseDependency --parseInternal --parseDepth 1
+```
