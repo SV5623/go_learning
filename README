@@ -1,169 +1,127 @@
 # Event App API
 
-REST API for managing events and attendees built with Go, Gin, PostgreSQL and JWT authentication.
+> REST API for event and attendee management written in Go.
 
-## Features
+## Stack
 
-* User registration and login
-* JWT authentication
-* Event CRUD operations
-* Event attendees management
-* PostgreSQL database
-* Database migrations
-* Swagger documentation
-
-## Tech Stack
-
-* Go
-* Gin
-* PostgreSQL
-* JWT
-* Swagger
-* Air
-
-## Project Structure
-
-```
-back/
-├── cmd/
-│   ├── api/
-│   └── migrate/
-├── internal/
-│   ├── database/
-│   └── env/
-├── docs/
-├── go.mod
-└── go.sum
+```text
+Go
+Gin
+PostgreSQL
+JWT
+Swagger
+Air
 ```
 
-## Environment Variables
+## Setup
 
-Create a `.env` file inside:
+### Clone
 
+```bash
+git clone https://github.com/SV5623/go_learning.git
+cd go_learning/back
 ```
-cmd/api/
+
+### Environment
+
+Create:
+
+```text
+cmd/api/.env
 ```
 
-Example:
-
-```
+```env
 PORT=5623
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/event_app?sslmode=disable
 JWT_SECRET=your-secret-key
 ```
 
-## Running the Application
+### Run
 
-Install Air:
-
-```
-go install github.com/air-verse/air@latest
-```
-
-Navigate to:
-
-```
+```bash
 cd cmd/api
-```
-
-Run:
-
-```
 air
 ```
 
-Application:
+Server:
 
-```
+```text
 http://localhost:5623
 ```
 
-## Database Migrations
+---
 
-Create a migration:
+## Migrations
 
-```
+Create migration:
+
+```bash
 migrate create -ext sql -dir ./cmd/migrate/migrations -seq create_attendees_table
 ```
 
-Example:
+Apply:
 
-`000001_create_attendees_table.up.sql`
-
-```
-CREATE TABLE IF NOT EXISTS attendees (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    event_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-);
+```bash
+go run cmd/migrate/main.go up
 ```
 
-`000001_create_attendees_table.down.sql`
+Rollback:
 
-```
-DROP TABLE IF EXISTS attendees;
-```
-
-Apply migrations:
-
-```
-go run main.go up
+```bash
+go run cmd/migrate/main.go down
 ```
 
-Rollback migrations:
+Force version:
 
-```
-go run main.go down
-```
-
-If database becomes dirty:
-
-```
+```bash
 migrate force <version>
 ```
 
 Example:
 
-```
+```bash
 migrate force 2
 ```
 
+---
+
 ## Swagger
 
-Install Swag:
+Install:
 
-```
+```bash
 go install github.com/swaggo/swag/cmd/swag@latest
 ```
 
-Generate docs:
+Generate:
 
-```
+```bash
 swag init --dir cmd/api --parseDependency --parseInternal --parseDepth 1
 ```
 
-Swagger UI:
+Open:
 
-```
+```text
 http://localhost:5623/swagger/index.html
 ```
 
-## API Endpoints
+---
 
-### Authentication
+## Routes
 
-```
+### Auth
+
+```http
 POST /api/v1/auth/register
 POST /api/v1/auth/login
 ```
 
 ### Events
 
-```
+```http
 GET    /api/v1/events
 GET    /api/v1/events/:id
+
 POST   /api/v1/events
 PUT    /api/v1/events/:id
 DELETE /api/v1/events/:id
@@ -171,21 +129,34 @@ DELETE /api/v1/events/:id
 
 ### Attendees
 
-```
+```http
 GET    /api/v1/events/:id/attendees
 GET    /api/v1/attendees/:id/events
+
 POST   /api/v1/events/:id/attendees/:userId
 DELETE /api/v1/events/:id/attendees/:userId
 ```
 
-## Authentication
+---
 
-Protected endpoints require:
+## Authorization
 
-```
+```http
 Authorization: Bearer <jwt-token>
 ```
 
+---
+
 ## Status
 
-Backend is functional and currently being expanded with a React frontend.
+```text
+[x] Authentication
+[x] JWT Authorization
+[x] Event CRUD
+[x] Attendee Management
+[x] PostgreSQL
+[x] Swagger
+
+[ ] Frontend (React)
+[ ] Docker Compose
+```
