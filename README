@@ -11,7 +11,6 @@ REST API for managing events and attendees built with Go, Gin, PostgreSQL and JW
 * PostgreSQL database
 * Database migrations
 * Swagger documentation
-* Docker support
 
 ## Tech Stack
 
@@ -19,12 +18,12 @@ REST API for managing events and attendees built with Go, Gin, PostgreSQL and JW
 * Gin
 * PostgreSQL
 * JWT
-* Docker
 * Swagger
+* Air
 
 ## Project Structure
 
-```text
+```
 back/
 ├── cmd/
 │   ├── api/
@@ -41,13 +40,13 @@ back/
 
 Create a `.env` file inside:
 
-```text
+```
 cmd/api/
 ```
 
 Example:
 
-```env
+```
 PORT=5623
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/event_app?sslmode=disable
 JWT_SECRET=your-secret-key
@@ -57,25 +56,25 @@ JWT_SECRET=your-secret-key
 
 Install Air:
 
-```bash
+```
 go install github.com/air-verse/air@latest
 ```
 
 Navigate to:
 
-```bash
+```
 cd cmd/api
 ```
 
 Run:
 
-```bash
+```
 air
 ```
 
-API will be available at:
+Application:
 
-```text
+```
 http://localhost:5623
 ```
 
@@ -83,15 +82,15 @@ http://localhost:5623
 
 Create a migration:
 
-```bash
+```
 migrate create -ext sql -dir ./cmd/migrate/migrations -seq create_attendees_table
 ```
 
-Example migration:
+Example:
 
 `000001_create_attendees_table.up.sql`
 
-```sql
+```
 CREATE TABLE IF NOT EXISTS attendees (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
@@ -103,27 +102,51 @@ CREATE TABLE IF NOT EXISTS attendees (
 
 `000001_create_attendees_table.down.sql`
 
-```sql
+```
 DROP TABLE IF EXISTS attendees;
+```
+
+Apply migrations:
+
+```
+go run main.go up
+```
+
+Rollback migrations:
+
+```
+go run main.go down
+```
+
+If database becomes dirty:
+
+```
+migrate force <version>
+```
+
+Example:
+
+```
+migrate force 2
 ```
 
 ## Swagger
 
 Install Swag:
 
-```bash
+```
 go install github.com/swaggo/swag/cmd/swag@latest
 ```
 
-Generate documentation:
+Generate docs:
 
-```bash
+```
 swag init --dir cmd/api --parseDependency --parseInternal --parseDepth 1
 ```
 
 Swagger UI:
 
-```text
+```
 http://localhost:5623/swagger/index.html
 ```
 
@@ -131,14 +154,14 @@ http://localhost:5623/swagger/index.html
 
 ### Authentication
 
-```http
+```
 POST /api/v1/auth/register
 POST /api/v1/auth/login
 ```
 
 ### Events
 
-```http
+```
 GET    /api/v1/events
 GET    /api/v1/events/:id
 POST   /api/v1/events
@@ -148,7 +171,7 @@ DELETE /api/v1/events/:id
 
 ### Attendees
 
-```http
+```
 GET    /api/v1/events/:id/attendees
 GET    /api/v1/attendees/:id/events
 POST   /api/v1/events/:id/attendees/:userId
@@ -159,7 +182,7 @@ DELETE /api/v1/events/:id/attendees/:userId
 
 Protected endpoints require:
 
-```http
+```
 Authorization: Bearer <jwt-token>
 ```
 
