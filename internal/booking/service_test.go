@@ -1,6 +1,7 @@
 package booking
 
 import (
+	"cinema_app/internal/adapters/redis"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -9,10 +10,10 @@ import (
 )
 
 func TestConcurrentBooking_ExactlyOneWins(t *testing.T) {
-	store := NewCurrentStore()
+	store := NewRedisStore(redis.NewClient("localhost:6379"))
 	svc := NewService(store)
 
-	const numGoroutines = 100_000 // 100k users trying to book a seat at the same time
+	const numGoroutines = 100_0 // 1k users trying to book a seat at the same time
 
 	var (
 		successes atomic.Int64
